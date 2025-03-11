@@ -13,6 +13,7 @@ import { Accelerometer } from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiService from '../services/apiService';
 import { formatAccelerationData, calculateSamplingRate } from '../utils/accelerometerUtils';
+import RegistrationScreen from './RegistrationScreen';
 
 const TOKEN_KEY = '@areum_auth_token';
 
@@ -27,6 +28,7 @@ export default function UploadScreen() {
   const [password, setPassword] = useState('');
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [error, setError] = useState(null);
+  const [showRegistration, setShowRegistration] = useState(false);
 
   // Check authentication on component mount
   useEffect(() => {
@@ -164,6 +166,30 @@ export default function UploadScreen() {
     return value.toFixed(3);
   };
 
+  const handleRegistrationSuccess = () => {
+    setShowRegistration(false);
+  };
+
+  const switchToLogin = () => {
+    setShowRegistration(false);
+    setError(null);
+  };
+
+  const switchToRegister = () => {
+    setShowRegistration(true);
+    setError(null);
+  };
+
+  // If showing registration screen
+  if (!isAuthenticated && showRegistration) {
+    return (
+      <RegistrationScreen 
+        onRegistrationSuccess={handleRegistrationSuccess}
+        switchToLogin={switchToLogin}
+      />
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
@@ -208,6 +234,13 @@ export default function UploadScreen() {
                 <Text style={styles.buttonText}>Login</Text>
               )}
             </TouchableOpacity>
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.switchText}>Don't have an account?</Text>
+              <TouchableOpacity onPress={switchToRegister}>
+                <Text style={styles.switchLink}>Register</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <>
@@ -381,5 +414,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 15,
+  },
+  switchText: {
+    marginRight: 5,
+    color: '#666',
+  },
+  switchLink: {
+    color: '#3f51b5',
+    fontWeight: 'bold',
   },
 });
