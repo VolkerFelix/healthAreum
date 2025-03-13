@@ -72,7 +72,7 @@ jobs:
       - name: Tear down backend services
         if: always()
         working-directory: ./backend
-        run: docker-compose down
+        run: docker compose down
         
   build:
     name: Build Application
