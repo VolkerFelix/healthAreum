@@ -99,12 +99,12 @@ jobs:
           expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
           
-      - name: Build web version
-        run: npx expo export:web
+      - name: Build application
+        run: npx expo export
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: web-build
-          path: web-build/
+          name: expo-dist
+          path: dist/
           retention-days: 7
