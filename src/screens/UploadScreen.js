@@ -180,12 +180,38 @@ export default function UploadScreen() {
     setError(null);
   };
 
+  const handleAutoLogin = async (username, password) => {
+    try {
+      setLoginInProgress(true);
+      setError(null);
+      
+      const response = await apiService.loginUser({ username, password });
+      
+      if (response && response.token) {
+        await AsyncStorage.setItem(TOKEN_KEY, response.token);
+        setIsAuthenticated(true);
+        setUsername('');
+        setPassword('');
+      } else {
+        setError('Auto-login failed. Please log in manually.');
+        setShowRegistration(false);
+      }
+    } catch (err) {
+      console.error('Auto-login error:', err);
+      setError('Auto-login failed. Please log in manually.');
+      setShowRegistration(false);
+    } finally {
+      setLoginInProgress(false);
+    }
+  };
+
   // If showing registration screen
   if (!isAuthenticated && showRegistration) {
     return (
       <RegistrationScreen 
         onRegistrationSuccess={handleRegistrationSuccess}
         switchToLogin={switchToLogin}
+        handleAutoLogin={handleAutoLogin}
       />
     );
   }
